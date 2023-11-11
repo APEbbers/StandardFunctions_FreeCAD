@@ -31,7 +31,7 @@ class StandardFunctions_FreeCAD:
         3 : Inputbox with dropdown      (text, title, style, default, stringlist)\n
         """
         from PySide import QtGui
-    
+
         if style == 0:
             reply = str(QtGui.QMessageBox.information(None, title, text))
             return reply
@@ -49,7 +49,7 @@ class StandardFunctions_FreeCAD:
                 return "no"
         if style == 2:
             reply = QtGui.QInputDialog.getText(None, title, text, text=default)
-    
+
             if reply[1]:
                 # user clicked OK
                 replyText = reply[0]
@@ -59,7 +59,7 @@ class StandardFunctions_FreeCAD:
             return str(replyText)
         if style == 3:
             reply = QtGui.QInputDialog.getItem(None, title, text, stringList, 1, True)
-    
+
             if reply[1]:
                 # user clicked OK
                 replyText = reply[0]
@@ -67,8 +67,7 @@ class StandardFunctions_FreeCAD:
                 # user clicked Cancel
                 replyText = reply[0]  # which will be "" if they clicked Cancel
             return str(replyText)
-    
-    
+
     def SaveDialog(files, OverWrite: bool = True):
         """
         files must be like:\n
@@ -85,12 +84,12 @@ class StandardFunctions_FreeCAD:
         import tkinter as tk
         from tkinter.filedialog import asksaveasfile
         from tkinter.filedialog import askopenfilename
-    
+
         # Create the window
         root = tk.Tk()
         # Hide the window
         root.withdraw()
-    
+
         if OverWrite is True:
             file = asksaveasfile(filetypes=files, defaultextension=files)
             if file is not None:
@@ -99,28 +98,25 @@ class StandardFunctions_FreeCAD:
             file = askopenfilename(filetypes=files, defaultextension=files)
             if file is not None:
                 return file
-    
-    
+
     def GetLetterFromNumber(number: int, UCase: bool = True):
         from openpyxl.utils import get_column_letter
-    
+
         Letter = get_column_letter(number)
-    
+
         # If UCase is true, convert to upper case
         if UCase is True:
             Letter = Letter.upper()
-    
+
         return Letter
-    
-    
+
     def GetNumberFromLetter(Letter):
         from openpyxl.utils import column_index_from_string
-    
+
         Number = column_index_from_string(Letter)
-    
+
         return Number
-    
-    
+
     def GetA1fromR1C1(input: str) -> str:
         if input[:1] == "'":
             input = input[1:]
@@ -128,19 +124,18 @@ class StandardFunctions_FreeCAD:
             input = input.upper()
             ColumnPosition = input.find("C")
             RowNumber = int(input[1:(ColumnPosition)])
-            ColumnNumber = int(input[(ColumnPosition + 1) :])
-    
+            ColumnNumber = int(input[(ColumnPosition + 1):])
+
             ColumnLetter = GetLetterFromNumber(ColumnNumber)
-    
+
             return str(ColumnLetter + str(RowNumber))
         except Exception:
             return ""
-    
-    
+
     def CheckIfWorkbookExists(FullFileName: str, CreateIfNone: bool = True):
         import os
         from openpyxl import Workbook
-    
+
         result = False
         try:
             result = os.path.exists(FullFileName)
@@ -162,8 +157,7 @@ class StandardFunctions_FreeCAD:
             if CreateIfNone is False:
                 result = False
         return result
-    
-    
+
     def ColorConvertor(ColorRGB: [], Alpha: float = 1) -> ():
         """
         A single function to convert colors to rgba colors as a tuple of float from 0-1
@@ -171,18 +165,17 @@ class StandardFunctions_FreeCAD:
         Alpha:      0-1
         """
         from matplotlib import colors as mcolors
-    
+
         ColorRed = ColorRGB[0] / 255
         colorGreen = ColorRGB[1] / 255
         colorBlue = ColorRGB[2] / 255
-    
+
         color = (ColorRed, colorGreen, colorBlue)
-    
+
         result = mcolors.to_rgba(color, Alpha)
-    
+
         return result
-    
-    
+
     def OpenFile(FileName: str):
         """
         Filename = full path with filename as string
@@ -190,7 +183,7 @@ class StandardFunctions_FreeCAD:
         import subprocess
         import os
         import platform
-    
+
         if os.path.exists(FileName):
             if platform.system() == "Darwin":  # macOS
                 subprocess.call(("open", FileName))
@@ -200,3 +193,30 @@ class StandardFunctions_FreeCAD:
                 subprocess.call(("xdg-open", FileName))
         else:
             print(f"Error: {FileName} does not exist.")
+
+    def SetColumnWidth_SpreadSheet(self, sheet, column: str, cellValue: str, factor: int = 10) -> bool:
+        """_summary_
+
+        Args:
+            sheet (_type_): FreeCAD spreadsheet object.\n
+            column (str): The column for which the width will be set. must be like "A", "B", etc.\n
+            cellValue (str): The string to calulate the widht from.\n
+            factor (int, optional): to increase the stringlength with a factor. Defaults to 10.\n
+
+        Returns:
+            bool: returns True or False
+        """
+        try:
+            # Calculate the text length needed.
+            length = int(len(cellValue) * factor)
+
+            print(column)
+            # Set the column width
+            sheet.setColumnWidth(column, length)
+
+            # Recompute the sheet
+            sheet.recompute()
+        except Exception:
+            return False
+
+        return True

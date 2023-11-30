@@ -220,3 +220,21 @@ class StandardFunctions_FreeCAD:
             return False
 
         return True
+
+def Print(Input: str, Type: str = ""):
+    """_summary_
+
+    Args:
+        Input (str): Text to print.\n
+        Type (str, optional): Type of message. (enter Warning, Error or Log). Defaults to "".
+    """
+    import FreeCAD as App
+
+    if Type == "Warning":
+        App.Console.PrintWarning(Input + "\n")
+    elif Type == "Error":
+        App.Console.PrintError(Input + "\n")
+    elif Type == "Log":
+        App.Console.PrintLog(Input + "\n")
+    else:
+        App.PrintMessage(Input + "\n")

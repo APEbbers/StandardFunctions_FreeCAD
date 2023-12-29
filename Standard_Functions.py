@@ -202,16 +202,28 @@ class StandardFunctions_FreeCAD:
         import subprocess
         import os
         import platform
-
-        if os.path.exists(FileName):
-            if platform.system() == "Darwin":  # macOS
-                subprocess.call(("open", FileName))
-            elif platform.system() == "Windows":  # Windows
-                os.startfile(FileName)
-            else:  # linux variants
-                subprocess.call(("xdg-open", FileName))
-        else:
-            print(f"Error: {FileName} does not exist.")
+    
+        try:
+            if os.path.exists(FileName):
+                if platform.system() == "Darwin":  # macOS
+                    subprocess.call(("open", FileName))
+                elif platform.system() == "Windows":  # Windows
+                    os.startfile(FileName)
+                else:  # linux variants
+                    print(FileName)
+                    try:
+                        subprocess.check_output(["xdg-open", FileName.strip()])
+                    except subprocess.CalledProcessError:
+                        Print(
+                            f"An error occured when opening {FileName}!\n"
+                            + "This can happen when running FreeCAD as an AppImage.\n"
+                            + "Please install FreeCAD directly.",
+                            "Error",
+                        )
+            else:
+                print(f"Error: {FileName} does not exist.")
+        except Exception as e:
+            raise e
 
     def SetColumnWidth_SpreadSheet(self, sheet, column: str, cellValue: str, factor: int = 10) -> bool:
         """_summary_

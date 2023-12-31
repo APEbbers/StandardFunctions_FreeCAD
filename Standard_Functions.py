@@ -25,67 +25,67 @@
 
 class StandardFunctions_FreeCAD:
     def Mbox(text, title="", style=0, IconType="Information", default="", stringList="[,]"):
-    """
-    Message Styles:\n
-    0 : OK                          (text, title, style)\n
-    1 : Yes | No                    (text, title, style)\n
-    20 : Inputbox                    (text, title, style, default)\n
-    21 : Inputbox with dropdown      (text, title, style, default, stringlist)\n
-    """
-    from PySide2.QtWidgets import QMessageBox, QInputDialog
+        """
+        Message Styles:\n
+        0 : OK                          (text, title, style)\n
+        1 : Yes | No                    (text, title, style)\n
+        20 : Inputbox                    (text, title, style, default)\n
+        21 : Inputbox with dropdown      (text, title, style, default, stringlist)\n
+        """
+        from PySide2.QtWidgets import QMessageBox, QInputDialog
 
-    Icon = QMessageBox.Information
-    if IconType == "NoIcon":
-        Icon = QMessageBox.NoIcon
-    if IconType == "Question":
-        Icon = QMessageBox.Question
-    if IconType == "Warning":
-        Icon = QMessageBox.Warning
-    if IconType == "Critical":
-        Icon = QMessageBox.Critical
+        Icon = QMessageBox.Information
+        if IconType == "NoIcon":
+            Icon = QMessageBox.NoIcon
+        if IconType == "Question":
+            Icon = QMessageBox.Question
+        if IconType == "Warning":
+            Icon = QMessageBox.Warning
+        if IconType == "Critical":
+            Icon = QMessageBox.Critical
 
-    if style == 0:
-        # Set the messagebox
-        msgBox = QMessageBox()
-        msgBox.setIcon(Icon)
-        msgBox.setText(text)
-        msgBox.setWindowTitle(title)
+        if style == 0:
+            # Set the messagebox
+            msgBox = QMessageBox()
+            msgBox.setIcon(Icon)
+            msgBox.setText(text)
+            msgBox.setWindowTitle(title)
 
-        reply = msgBox.exec_()
-        return reply
-    if style == 1:
-        # Set the messagebox
-        msgBox = QMessageBox()
-        msgBox.setIcon(Icon)
-        msgBox.setText(text)
-        msgBox.setWindowTitle(title)
-        # Set the buttons and default button
-        msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-        msgBox.setDefaultButton(QMessageBox.No)
+            reply = msgBox.exec_()
+            return reply
+        if style == 1:
+            # Set the messagebox
+            msgBox = QMessageBox()
+            msgBox.setIcon(Icon)
+            msgBox.setText(text)
+            msgBox.setWindowTitle(title)
+            # Set the buttons and default button
+            msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+            msgBox.setDefaultButton(QMessageBox.No)
 
-        reply = msgBox.exec_()
-        if reply == QMessageBox.Yes:
-            return "yes"
-        if reply == QMessageBox.No:
-            return "no"
-    if style == 20:
-        reply = QInputDialog.getText(parent=None, title=title, label=text, text=default)
-        if reply[1]:
-            # user clicked OK
-            replyText = reply[0]
-        else:
-            # user clicked Cancel
-            replyText = reply[0]  # which will be "" if they clicked Cancel
-        return str(replyText)
-    if style == 21:
-        reply = QInputDialog.getItem(parent=None, title=title, label=text, items=stringList, current=1, editable=True)
-        if reply[1]:
-            # user clicked OK
-            replyText = reply[0]
-        else:
-            # user clicked Cancel
-            replyText = reply[0]  # which will be "" if they clicked Cancel
-        return str(replyText)
+            reply = msgBox.exec_()
+            if reply == QMessageBox.Yes:
+                return "yes"
+            if reply == QMessageBox.No:
+                return "no"
+        if style == 20:
+            reply = QInputDialog.getText(parent=None, title=title, label=text, text=default)
+            if reply[1]:
+                # user clicked OK
+                replyText = reply[0]
+            else:
+                # user clicked Cancel
+                replyText = reply[0]  # which will be "" if they clicked Cancel
+            return str(replyText)
+        if style == 21:
+            reply = QInputDialog.getItem(parent=None, title=title, label=text, items=stringList, current=1, editable=True)
+            if reply[1]:
+                # user clicked OK
+                replyText = reply[0]
+            else:
+                # user clicked Cancel
+                replyText = reply[0]  # which will be "" if they clicked Cancel
+            return str(replyText)
 
     def SaveDialog(files, OverWrite: bool = True):
         """
@@ -193,7 +193,8 @@ class StandardFunctions_FreeCAD:
         color = (ColorRed, colorGreen, colorBlue)
         result = mcolors.to_rgba(color, ColorAlpha)
 
-    return result
+        return result
+
 
     def OpenFile(FileName: str):
         """

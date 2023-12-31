@@ -1,55 +1,75 @@
-# ***************************************************************************
-# *   Copyright (c) 2023 Paul Ebbers paul.ebbers@gmail.com                  *
-# *                                                                         *
-# *   This file is part of the FreeCAD CAx development system.              *
-# *                                                                         *
-# *   This program is free software; you can redistribute it and/or modify  *
-# *   it under the terms of the GNU Lesser General Public License (LGPL)    *
-# *   as published by the Free Software Foundation; either version 2 of     *
-# *   the License, or (at your option) any later version.                   *
-# *   for detail see the LICENCE text file.                                 *
-# *                                                                         *
-# *   FreeCAD is distributed in the hope that it will be useful,            *
-# *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
-# *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
-# *   GNU Lesser General Public License for more details.                   *
-# *                                                                         *
-# *   You should have received a copy of the GNU Library General Public     *
-# *   License along with FreeCAD; if not, write to the Free Software        *
-# *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  *
-# *   USA                                                                   *
-# *                                                                         *
-# ***************************************************************************/
+# *************************************************************************************
+# *   MIT License                                                                     *
+# *                                                                                   *
+# *   Copyright (c) 2023 Paul Ebbers                                                  *
+# *                                                                                   *
+# *   Permission is hereby granted, free of charge, to any person obtaining a copy    *
+# *   of this software and associated documentation files (the "Software"), to deal   *
+# *   in the Software without restriction, including without limitation the rights    *
+# *   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell       *
+# *   copies of the Software, and to permit persons to whom the Software is           *
+# *   furnished to do so, subject to the following conditions:                        *
+# *                                                                                   *
+# *   The above copyright notice and this permission notice shall be included in all  *
+# *   copies or substantial portions of the Software.                                 *
+# *                                                                                   *
+# *   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR      *
+# *   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,        *
+# *   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE     *
+# *   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER          *
+# *   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,   *
+# *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE   *
+# *   SOFTWARE.                                                                       *
+# *                                                                                   *
+# *************************************************************************************/
 
 class StandardFunctions_FreeCAD:
-    def Mbox(text, title="", style=0, default="", stringList="[,]"):
+    def Mbox(text, title="", style=0, IconType="Information", default="", stringList="[,]"):
         """
         Message Styles:\n
         0 : OK                          (text, title, style)\n
         1 : Yes | No                    (text, title, style)\n
-        2 : Inputbox                    (text, title, style, default)\n
-        3 : Inputbox with dropdown      (text, title, style, default, stringlist)\n
+        20 : Inputbox                    (text, title, style, default)\n
+        21 : Inputbox with dropdown      (text, title, style, default, stringlist)\n
         """
-        from PySide import QtGui
+        from PySide2.QtWidgets import QMessageBox, QInputDialog
+
+        Icon = QMessageBox.Information
+        if IconType == "NoIcon":
+            Icon = QMessageBox.NoIcon
+        if IconType == "Question":
+            Icon = QMessageBox.Question
+        if IconType == "Warning":
+            Icon = QMessageBox.Warning
+        if IconType == "Critical":
+            Icon = QMessageBox.Critical
 
         if style == 0:
-            reply = str(QtGui.QMessageBox.information(None, title, text))
+            # Set the messagebox
+            msgBox = QMessageBox()
+            msgBox.setIcon(Icon)
+            msgBox.setText(text)
+            msgBox.setWindowTitle(title)
+
+            reply = msgBox.exec_()
             return reply
         if style == 1:
-            reply = QtGui.QMessageBox.question(
-                None,
-                title,
-                text,
-                QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
-                QtGui.QMessageBox.No,
-            )
-            if reply == QtGui.QMessageBox.Yes:
-                return "yes"
-            if reply == QtGui.QMessageBox.No:
-                return "no"
-        if style == 2:
-            reply = QtGui.QInputDialog.getText(None, title, text, text=default)
+            # Set the messagebox
+            msgBox = QMessageBox()
+            msgBox.setIcon(Icon)
+            msgBox.setText(text)
+            msgBox.setWindowTitle(title)
+            # Set the buttons and default button
+            msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+            msgBox.setDefaultButton(QMessageBox.No)
 
+            reply = msgBox.exec_()
+            if reply == QMessageBox.Yes:
+                return "yes"
+            if reply == QMessageBox.No:
+                return "no"
+        if style == 20:
+            reply = QInputDialog.getText(parent=None, title=title, label=text, text=default)
             if reply[1]:
                 # user clicked OK
                 replyText = reply[0]
@@ -57,9 +77,8 @@ class StandardFunctions_FreeCAD:
                 # user clicked Cancel
                 replyText = reply[0]  # which will be "" if they clicked Cancel
             return str(replyText)
-        if style == 3:
-            reply = QtGui.QInputDialog.getItem(None, title, text, stringList, 1, True)
-
+        if style == 21:
+            reply = QInputDialog.getItem(parent=None, title=title, label=text, items=stringList, current=1, editable=True)
             if reply[1]:
                 # user clicked OK
                 replyText = reply[0]
@@ -158,23 +177,24 @@ class StandardFunctions_FreeCAD:
                 result = False
         return result
 
-    def ColorConvertor(ColorRGB: [], Alpha: float = 1) -> ():
+    def ColorConvertor(ColorRGB: [], Alpha: float = 255) -> ():
         """
         A single function to convert colors to rgba colors as a tuple of float from 0-1
         ColorRGB:   [255,255,255]
         Alpha:      0-1
         """
         from matplotlib import colors as mcolors
-
+    
         ColorRed = ColorRGB[0] / 255
         colorGreen = ColorRGB[1] / 255
         colorBlue = ColorRGB[2] / 255
-
+        ColorAlpha = Alpha / 255
+    
         color = (ColorRed, colorGreen, colorBlue)
-
-        result = mcolors.to_rgba(color, Alpha)
+        result = mcolors.to_rgba(color, ColorAlpha)
 
         return result
+
 
     def OpenFile(FileName: str):
         """
@@ -183,16 +203,28 @@ class StandardFunctions_FreeCAD:
         import subprocess
         import os
         import platform
-
-        if os.path.exists(FileName):
-            if platform.system() == "Darwin":  # macOS
-                subprocess.call(("open", FileName))
-            elif platform.system() == "Windows":  # Windows
-                os.startfile(FileName)
-            else:  # linux variants
-                subprocess.call(("xdg-open", FileName))
-        else:
-            print(f"Error: {FileName} does not exist.")
+    
+        try:
+            if os.path.exists(FileName):
+                if platform.system() == "Darwin":  # macOS
+                    subprocess.call(("open", FileName))
+                elif platform.system() == "Windows":  # Windows
+                    os.startfile(FileName)
+                else:  # linux variants
+                    print(FileName)
+                    try:
+                        subprocess.check_output(["xdg-open", FileName.strip()])
+                    except subprocess.CalledProcessError:
+                        Print(
+                            f"An error occured when opening {FileName}!\n"
+                            + "This can happen when running FreeCAD as an AppImage.\n"
+                            + "Please install FreeCAD directly.",
+                            "Error",
+                        )
+            else:
+                print(f"Error: {FileName} does not exist.")
+        except Exception as e:
+            raise e
 
     def SetColumnWidth_SpreadSheet(self, sheet, column: str, cellValue: str, factor: int = 10) -> bool:
         """_summary_
@@ -220,3 +252,21 @@ class StandardFunctions_FreeCAD:
             return False
 
         return True
+
+def Print(Input: str, Type: str = ""):
+    """_summary_
+
+    Args:
+        Input (str): Text to print.\n
+        Type (str, optional): Type of message. (enter Warning, Error or Log). Defaults to "".
+    """
+    import FreeCAD as App
+
+    if Type == "Warning":
+        App.Console.PrintWarning(Input + "\n")
+    elif Type == "Error":
+        App.Console.PrintError(Input + "\n")
+    elif Type == "Log":
+        App.Console.PrintLog(Input + "\n")
+    else:
+        App.Console.PrintMessage(Input + "\n")

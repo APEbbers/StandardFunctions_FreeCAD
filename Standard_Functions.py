@@ -177,23 +177,23 @@ class StandardFunctions_FreeCAD:
                 result = False
         return result
 
-    def ColorConvertor(ColorRGB: [], Alpha: float = 1) -> ():
+    def ColorConvertor(ColorRGB: [], Alpha: float = 255) -> ():
         """
         A single function to convert colors to rgba colors as a tuple of float from 0-1
         ColorRGB:   [255,255,255]
         Alpha:      0-1
         """
         from matplotlib import colors as mcolors
-
+    
         ColorRed = ColorRGB[0] / 255
         colorGreen = ColorRGB[1] / 255
         colorBlue = ColorRGB[2] / 255
-
+        ColorAlpha = Alpha / 255
+    
         color = (ColorRed, colorGreen, colorBlue)
+        result = mcolors.to_rgba(color, ColorAlpha)
 
-        result = mcolors.to_rgba(color, Alpha)
-
-        return result
+    return result
 
     def OpenFile(FileName: str):
         """

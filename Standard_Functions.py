@@ -25,7 +25,7 @@
 
 class StandardFunctions_FreeCAD:
     def Mbox(text, title="", style=0, IconType="Information", default="", stringList="[,]"):
-   """
+    """
     Message Styles:\n
     0 : OK                          (text, title, style)\n
     1 : Yes | No                    (text, title, style)\n

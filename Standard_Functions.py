@@ -24,7 +24,8 @@
 # *************************************************************************************/
 
 class StandardFunctions_FreeCAD:
-    def Mbox(text, title="", style=0, IconType="Information", default="", stringList="[,]"):
+    @classmethod
+    def Mbox(self, text, title="", style=0, IconType="Information", default="", stringList="[,]"):
         """
         Message Styles:\n
         0 : OK                          (text, title, style)\n
@@ -78,7 +79,8 @@ class StandardFunctions_FreeCAD:
                 replyText = reply[0]  # which will be "" if they clicked Cancel
             return str(replyText)
         if style == 21:
-            reply = QInputDialog.getItem(parent=None, title=title, label=text, items=stringList, current=1, editable=True)
+            reply = QInputDialog.getItem(parent=None, title=title, label=text,
+                                         items=stringList, current=1, editable=True)
             if reply[1]:
                 # user clicked OK
                 replyText = reply[0]
@@ -87,7 +89,8 @@ class StandardFunctions_FreeCAD:
                 replyText = reply[0]  # which will be "" if they clicked Cancel
             return str(replyText)
 
-    def SaveDialog(files, OverWrite: bool = True):
+    @classmethod
+    def GetFileDialog(self, files, SaveAs: bool = True) -> str:
         """
         files must be like:\n
         files = [\n
@@ -96,9 +99,9 @@ class StandardFunctions_FreeCAD:
             ('Text Document', '*.txt')\n
         ]\n
         \n
-        OverWrite:\n
-        If True, file will be overwritten\n
-        If False, only the path+filename will be returned\n
+        SaveAs:\n
+        If True,  as SaveAs dialog will open and the file will be overwritten\n
+        If False, an OpenFile dialog will be open and the file will be opened.\n
         """
         import tkinter as tk
         from tkinter.filedialog import asksaveasfile
@@ -109,16 +112,22 @@ class StandardFunctions_FreeCAD:
         # Hide the window
         root.withdraw()
 
-        if OverWrite is True:
+        file = ""
+        if SaveAs is True:
             file = asksaveasfile(filetypes=files, defaultextension=files)
-            if file is not None:
-                return file.name
-        if OverWrite is False:
-            file = askopenfilename(filetypes=files, defaultextension=files)
-            if file is not None:
-                return file
+            if file:
+                file = str(file.name)
+            else:
+                file = ""
+        if SaveAs is False:
+            if file:
+                file = askopenfilename(filetypes=files, defaultextension=files)
+            else:
+                file = ""
+        return file
 
-    def GetLetterFromNumber(number: int, UCase: bool = True):
+    @classmethod
+    def GetLetterFromNumber(self, number: int, UCase: bool = True):
         from openpyxl.utils import get_column_letter
 
         Letter = get_column_letter(number)
@@ -129,14 +138,16 @@ class StandardFunctions_FreeCAD:
 
         return Letter
 
-    def GetNumberFromLetter(Letter):
+    @classmethod
+    def GetNumberFromLetter(self, Letter):
         from openpyxl.utils import column_index_from_string
 
         Number = column_index_from_string(Letter)
 
         return Number
 
-    def GetA1fromR1C1(input: str) -> str:
+    @classmethod
+    def GetA1fromR1C1(self, input: str) -> str:
         if input[:1] == "'":
             input = input[1:]
         try:
@@ -145,13 +156,14 @@ class StandardFunctions_FreeCAD:
             RowNumber = int(input[1:(ColumnPosition)])
             ColumnNumber = int(input[(ColumnPosition + 1):])
 
-            ColumnLetter = GetLetterFromNumber(ColumnNumber)
+            ColumnLetter = self.GetLetterFromNumber(ColumnNumber)
 
             return str(ColumnLetter + str(RowNumber))
         except Exception:
             return ""
 
-    def CheckIfWorkbookExists(FullFileName: str, CreateIfNone: bool = True):
+    @classmethod
+    def CheckIfWorkbookExists(self, FullFileName: str, CreateIfNone: bool = True):
         import os
         from openpyxl import Workbook
 
@@ -177,33 +189,34 @@ class StandardFunctions_FreeCAD:
                 result = False
         return result
 
-    def ColorConvertor(ColorRGB: [], Alpha: float = 255) -> ():
+    @classmethod
+    def ColorConvertor(self, ColorRGB: [], Alpha: float = 255) -> ():
         """
         A single function to convert colors to rgba colors as a tuple of float from 0-1
         ColorRGB:   [255,255,255]
         Alpha:      0-1
         """
         from matplotlib import colors as mcolors
-    
+
         ColorRed = ColorRGB[0] / 255
         colorGreen = ColorRGB[1] / 255
         colorBlue = ColorRGB[2] / 255
         ColorAlpha = Alpha / 255
-    
+
         color = (ColorRed, colorGreen, colorBlue)
         result = mcolors.to_rgba(color, ColorAlpha)
 
         return result
 
-
-    def OpenFile(FileName: str):
+    @classmethod
+    def OpenFile(self, FileName: str):
         """
         Filename = full path with filename as string
         """
         import subprocess
         import os
         import platform
-    
+
         try:
             if os.path.exists(FileName):
                 if platform.system() == "Darwin":  # macOS
@@ -226,6 +239,7 @@ class StandardFunctions_FreeCAD:
         except Exception as e:
             raise e
 
+    @classmethod
     def SetColumnWidth_SpreadSheet(self, sheet, column: str, cellValue: str, factor: int = 10) -> bool:
         """_summary_
 
@@ -253,20 +267,21 @@ class StandardFunctions_FreeCAD:
 
         return True
 
-def Print(Input: str, Type: str = ""):
-    """_summary_
+    @classmethod
+    def Print(self, Input: str, Type: str = ""):
+        """_summary_
 
-    Args:
-        Input (str): Text to print.\n
-        Type (str, optional): Type of message. (enter Warning, Error or Log). Defaults to "".
-    """
-    import FreeCAD as App
+        Args:
+            Input (str): Text to print.\n
+            Type (str, optional): Type of message. (enter Warning, Error or Log). Defaults to "".
+        """
+        import FreeCAD as App
 
-    if Type == "Warning":
-        App.Console.PrintWarning(Input + "\n")
-    elif Type == "Error":
-        App.Console.PrintError(Input + "\n")
-    elif Type == "Log":
-        App.Console.PrintLog(Input + "\n")
-    else:
-        App.Console.PrintMessage(Input + "\n")
+        if Type == "Warning":
+            App.Console.PrintWarning(Input + "\n")
+        elif Type == "Error":
+            App.Console.PrintError(Input + "\n")
+        elif Type == "Log":
+            App.Console.PrintLog(Input + "\n")
+        else:
+            App.Console.PrintMessage(Input + "\n")

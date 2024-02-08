@@ -287,6 +287,17 @@ class StandardFunctions_FreeCAD:
             App.Console.PrintMessage(Input + "\n")
 
     @classmethod
+    def LightOrDark(rgbColor=[0, 128, 255, 255]):
+        import math
+
+        [r, g, b, a] = rgbColor
+        hsp = math.sqrt(0.299 * (r * r) + 0.587 * (g * g) + 0.114 * (b * b))
+        if hsp > 127.5:
+            return "light"
+        else:
+            return "dark"
+
+    @classmethod
     def toggleToolbars(ToolbarName: str, WorkBench: str = ""):
         import FreeCADGui as Gui
         from PySide2.QtWidgets import QToolBar

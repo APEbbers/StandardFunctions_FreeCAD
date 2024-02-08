@@ -319,3 +319,4 @@ class StandardFunctions_FreeCAD:
             if ToolBar.isHidden() is True:
                 ToolBar.setVisible(True)
                 return
+        return

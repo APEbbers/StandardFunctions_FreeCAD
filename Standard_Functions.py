@@ -285,3 +285,37 @@ class StandardFunctions_FreeCAD:
             App.Console.PrintLog(Input + "\n")
         else:
             App.Console.PrintMessage(Input + "\n")
+
+    @classmethod
+    def toggleToolbars(ToolbarName: str, WorkBench: str = ""):
+        import FreeCADGui as Gui
+        from PySide2.QtWidgets import QToolBar
+
+        # Get the active workbench
+        if WorkBench == "":
+            WB = Gui.activeWorkbench()
+        if WorkBench != "":
+            WB = Gui.getWorkbench(WorkBench)
+
+        # Get the list of toolbars present.
+        ListToolbars = WB.listToolbars()
+        # Go through the list. If the toolbar exists set ToolbarExists to True
+        ToolbarExists = False
+        for i in range(len(ListToolbars)):
+            if ListToolbars[i] == ToolbarName:
+                ToolbarExists = True
+
+        # If ToolbarExists is True continue. Otherwise return.
+        if ToolbarExists is True:
+            # Get the main window
+            mainWindow = Gui.getMainWindow()
+            # Get the toolbar
+            ToolBar = mainWindow.findChild(QToolBar, ToolbarName)
+            # If the toolbar is not hidden, hide it and return.
+            if ToolBar.isHidden() is False:
+                ToolBar.setHidden(True)
+                return
+            # If the toolbar is hidden, set visible and return.
+            if ToolBar.isHidden() is True:
+                ToolBar.setVisible(True)
+                return

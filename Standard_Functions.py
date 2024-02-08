@@ -288,6 +288,15 @@ class StandardFunctions_FreeCAD:
 
     @classmethod
     def LightOrDark(rgbColor=[0, 128, 255, 255]):
+        """_summary_
+        reference: https://alienryderflex.com/hsp.html
+        Args:
+            rgbColor (list, optional): RGB color. Defaults to [0, 128, 255, 255].\n
+            note: The alpha value is added for completeness, but us ignored in the equation.
+
+        Returns:
+            string: "light or dark"
+        """
         import math
 
         [r, g, b, a] = rgbColor

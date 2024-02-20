@@ -42,7 +42,7 @@ class StandardFunctions_FreeCAD:
         20 : Inputbox                    (text, title, style, default)\n
         21 : Inputbox with dropdown      (text, title, style, default, stringlist)\n
         """
-        from PySide2.QtWidgets import QMessageBox, QInputDialog
+        from PySide.QtWidgets import QMessageBox, QInputDialog
 
         Icon = QMessageBox.Information
         if IconType == "NoIcon":
@@ -328,7 +328,7 @@ class StandardFunctions_FreeCAD:
     @classmethod
     def toggleToolbars(ToolbarName: str, WorkBench: str = ""):
         import FreeCADGui as Gui
-        from PySide2.QtWidgets import QToolBar
+        from PySide.QtWidgets import QToolBar
 
         # Get the active workbench
         if WorkBench == "":

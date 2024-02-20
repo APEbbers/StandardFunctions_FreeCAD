@@ -23,9 +23,18 @@
 # *                                                                                   *
 # *************************************************************************************/
 
+
 class StandardFunctions_FreeCAD:
     @classmethod
-    def Mbox(self, text, title="", style=0, IconType="Information", default="", stringList="[,]"):
+    def Mbox(
+        self,
+        text,
+        title="",
+        style=0,
+        IconType="Information",
+        default="",
+        stringList="[,]",
+    ):
         """
         Message Styles:\n
         0 : OK                          (text, title, style)\n
@@ -33,7 +42,7 @@ class StandardFunctions_FreeCAD:
         20 : Inputbox                    (text, title, style, default)\n
         21 : Inputbox with dropdown      (text, title, style, default, stringlist)\n
         """
-        from PySide2.QtWidgets import QMessageBox, QInputDialog
+        from PySide.QtWidgets import QMessageBox, QInputDialog
 
         Icon = QMessageBox.Information
         if IconType == "NoIcon":
@@ -70,7 +79,9 @@ class StandardFunctions_FreeCAD:
             if reply == QMessageBox.No:
                 return "no"
         if style == 20:
-            reply = QInputDialog.getText(parent=None, title=title, label=text, text=default)
+            reply = QInputDialog.getText(
+                parent=None, title=title, label=text, text=default
+            )
             if reply[1]:
                 # user clicked OK
                 replyText = reply[0]
@@ -79,8 +90,14 @@ class StandardFunctions_FreeCAD:
                 replyText = reply[0]  # which will be "" if they clicked Cancel
             return str(replyText)
         if style == 21:
-            reply = QInputDialog.getItem(parent=None, title=title, label=text,
-                                         items=stringList, current=1, editable=True)
+            reply = QInputDialog.getItem(
+                parent=None,
+                title=title,
+                label=text,
+                items=stringList,
+                current=1,
+                editable=True,
+            )
             if reply[1]:
                 # user clicked OK
                 replyText = reply[0]
@@ -154,7 +171,7 @@ class StandardFunctions_FreeCAD:
             input = input.upper()
             ColumnPosition = input.find("C")
             RowNumber = int(input[1:(ColumnPosition)])
-            ColumnNumber = int(input[(ColumnPosition + 1):])
+            ColumnNumber = int(input[(ColumnPosition + 1) :])
 
             ColumnLetter = self.GetLetterFromNumber(ColumnNumber)
 
@@ -240,7 +257,9 @@ class StandardFunctions_FreeCAD:
             raise e
 
     @classmethod
-    def SetColumnWidth_SpreadSheet(self, sheet, column: str, cellValue: str, factor: int = 10) -> bool:
+    def SetColumnWidth_SpreadSheet(
+        self, sheet, column: str, cellValue: str, factor: int = 10
+    ) -> bool:
         """_summary_
 
         Args:
@@ -309,7 +328,7 @@ class StandardFunctions_FreeCAD:
     @classmethod
     def toggleToolbars(ToolbarName: str, WorkBench: str = ""):
         import FreeCADGui as Gui
-        from PySide2.QtWidgets import QToolBar
+        from PySide.QtWidgets import QToolBar
 
         # Get the active workbench
         if WorkBench == "":

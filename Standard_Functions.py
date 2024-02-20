@@ -427,7 +427,7 @@ def PartDesingFeatureList():
 
     return result
 
-
+# https://freecad.github.io/SourceDoc/d7/d7e/classPart_1_1Feature.html
 def AllFeaturesList():
     result = [
         "PartDesign::Pad",

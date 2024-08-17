@@ -107,41 +107,31 @@ class StandardFunctions_FreeCAD:
             return str(replyText)
 
     @classmethod
-    def GetFileDialog(self, files, SaveAs: bool = True) -> str:
-        """
-        files must be like:\n
-        files = [\n
-            ('All Files', '*.*'),\n
-            ('Python Files', '*.py'),\n
-            ('Text Document', '*.txt')\n
-        ]\n
-        \n
-        SaveAs:\n
+    def GetFolder(self, parent=None, DefaultPath="") -> str:
+        from PySide.QtWidgets import QFileDialog
+    
+        Directory = ""
+        Directory = QFileDialog.getExistingDirectory(parent=parent, caption="Select Folder", dir=DefaultPath)
+
+    return Directory
+    
+    @classmethod
+    def GetFileDialog(self, Filter="", parent=None, DefaultPath="", SaveAs: bool = True) -> str:
+    """
+    Set filter like:
+    "Images (*.png *.xpm .jpg);;Text files (.txt);;XML files (*.xml)"
+    SaveAs:\n
         If True,  as SaveAs dialog will open and the file will be overwritten\n
         If False, an OpenFile dialog will be open and the file will be opened.\n
-        """
-        import tkinter as tk
-        from tkinter.filedialog import asksaveasfile
-        from tkinter.filedialog import askopenfilename
+    """
+    from PySide.QtWidgets import QFileDialog
 
-        # Create the window
-        root = tk.Tk()
-        # Hide the window
-        root.withdraw()
-
-        file = ""
-        if SaveAs is True:
-            file = asksaveasfile(filetypes=files, defaultextension=files)
-            if file:
-                file = str(file.name)
-            else:
-                file = ""
-        if SaveAs is False:
-            if file:
-                file = askopenfilename(filetypes=files, defaultextension=files)
-            else:
-                file = ""
-        return file
+    file = ""
+    if SaveAs is False:
+        file = QFileDialog.getOpenFileName(parent=parent, caption="Select a file", dir=DefaultPath, filter=Filter)[0]
+    if SaveAs is True:
+        file = QFileDialog.getSaveFileName(parent=parent, caption="Select a file", dir=DefaultPath, filter=Filter)[0]
+    return file
 
     @classmethod
     def GetLetterFromNumber(self, number: int, UCase: bool = True):
